@@ -32,6 +32,11 @@ public class UserController {
         return userService.removeById(id);
     }
 
+    @PostMapping ("/del/batch")
+    public boolean deleteBatch(@RequestBody List<Integer> ids){
+        return userService.removeByIds(ids);
+    }
+
     //查询所有数据
     @GetMapping("/")
     public List<User> findAll(){
@@ -57,6 +62,7 @@ public class UserController {
         if(!"".equals(address)){
             queryWrapper.like("address",address);
         }
+        queryWrapper.orderByDesc("id");
         return userService.page(page,queryWrapper);
     }
 
