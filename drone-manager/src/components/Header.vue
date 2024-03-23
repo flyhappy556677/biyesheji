@@ -34,6 +34,7 @@ export  default {
   props:{
     sollapseBthClass:String,
     collapse:Boolean,
+    user:Object
 
   },
   computed:{
@@ -43,7 +44,7 @@ export  default {
   },
   data(){
     return{
-      user:localStorage.getItem("user") ?JSON.parse(localStorage.getItem("user")):{}
+
     }
   },
   watch:{//监听路由搜索出结果，监听路由变化

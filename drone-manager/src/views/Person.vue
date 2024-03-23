@@ -59,11 +59,8 @@ export  default {
       if (res.code === '200') {
         this.$message.success("保存成功")
 
-        //更新浏览器存储的用户信息
-        this.getUser().then(res=>{
-          res.token = JSON.parse(localStorage.getItem("user")).token
-          localStorage.setItem("user", JSON.stringify(res))
-        })
+        //触发父级更新User方法
+        this.$emit("refreshUser")
 
       } else {
         this.$message.error("保存失败")

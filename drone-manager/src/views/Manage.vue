@@ -7,12 +7,12 @@
 
         <el-container>
           <el-header style="  border-bottom: 1px solid #ccc;" >
-            <Header :sollapseBthClass="sollapseBthClass "  :collapse="collapse" />
+            <Header :sollapseBthClass="sollapseBthClass "  :collapse="collapse" :user="user"/>
           </el-header>
 
           <el-main>
 <!--            当前页面子路由全在router-view-->
-            <router-view/>
+            <router-view @refreshUser="getUser"  />
           </el-main>
         </el-container>
       </el-container>
@@ -31,9 +31,17 @@ export default {
       isCollapse: false,
       sideWidth: 200,
       logoTextShot: true,
+      user:{}
     }
   },
-  components: {Aside, Header},
+  components: {
+    Aside,
+    Header
+  },
+  created() {
+    //从后台获取最新的User数据
+    this.getUser()
+  },
   methods: {
     collapse() {  //点击收缩触发
       this.isCollapse = !this.isCollapse
@@ -46,8 +54,15 @@ export default {
         this.collapseBtnClass = 'el-icon-s-flod'
         this.logoTextShot = true
       }
-
     },
+    getUser(){
+      let username =localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).username : ""
+      //从后台获取数据
+      this.request.get("/user/username/" + username).then(res =>{
+        //重新赋值后台最新User数据
+        this.user =res.data
+      })
+    }
   }
 }
 </script>
