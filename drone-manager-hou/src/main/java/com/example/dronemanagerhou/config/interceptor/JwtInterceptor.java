@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.dronemanagerhou.common.Constants;
+import com.example.dronemanagerhou.config.AuthAccess;
 import com.example.dronemanagerhou.entity.User;
 import com.example.dronemanagerhou.exception.ServiceException;
 import com.example.dronemanagerhou.service.IUserService;
@@ -26,6 +27,16 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = request.getHeader("token");
+        if(!(handler instanceof HandlerMethod)){
+            return true;
+        }else {
+            HandlerMethod h =(HandlerMethod) handler;
+            AuthAccess authAccess=h.getMethodAnnotation(AuthAccess.class);
+            if(authAccess !=null){
+                return true;
+            }
+        }
+
         //如果不映射直接通过
         if(!(handler instanceof HandlerMethod)){
             return true;

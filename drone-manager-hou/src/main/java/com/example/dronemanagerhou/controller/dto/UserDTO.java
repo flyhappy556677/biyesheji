@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class UserDTO {
+    private Integer id;
     private String username;
     private String password;
     private String nickname;
@@ -14,4 +15,5 @@ public class UserDTO {
     private String token;
     private List<Menu> menus;
     private String role;
+    private String phone;
 }

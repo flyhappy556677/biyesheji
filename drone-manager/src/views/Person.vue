@@ -47,6 +47,7 @@ export  default {
   },
   created() {
     this.getUser().then(res  =>{
+      console.log(res)
       this.form =res
     })
   },

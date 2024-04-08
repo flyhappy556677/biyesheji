@@ -7,11 +7,14 @@ import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dronemanagerhou.common.Constants;
 import com.example.dronemanagerhou.common.Result;
 import com.example.dronemanagerhou.entity.Files;
 import com.example.dronemanagerhou.entity.User;
 import com.example.dronemanagerhou.mapper.FileMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +35,9 @@ public class FileController {
     private String fileUploadPath;
     @Resource
     private FileMapper fileMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     //文件上传接口
     @PostMapping("/upload")
     public String upload(@RequestParam MultipartFile file) throws IOException {
@@ -76,6 +82,9 @@ public class FileController {
         saveFile.setUrl(url);
         saveFile.setMd5(md5);
         fileMapper.insert(saveFile);
+
+//        flushRedis(Constants.FILES_KEY);
+
         return url;
     }
     //文件下载路径接口http://localhost:9090/file/{fileUUid}
@@ -104,14 +113,17 @@ public class FileController {
     public Result delete(@PathVariable Integer id) {
         Files files=fileMapper.selectById(id);
         files.setIsDelete(true);
-        fileMapper.updateById(files);
+        fileMapper.deleteById(files);
+        flushRedis(Constants.FILES_KEY);
         return  Result.success();
     }
 
     //更新状态
     @PostMapping("/update")
     public Result update(@RequestBody Files files) {
-        return Result.success(fileMapper.updateById(files));
+        fileMapper.updateById(files);
+        flushRedis(Constants.FILES_KEY);
+        return Result.success();
     }
 
     //新增或者更新
@@ -125,6 +137,7 @@ public class FileController {
             file.setIsDelete(true);
             fileMapper.updateById(file);
         }
+        flushRedis(Constants.FILES_KEY);
         return Result.success();
     }
 
@@ -143,5 +156,8 @@ public class FileController {
         return Result.success(fileMapper.selectPage(new Page<>(pageNum, pageSize),queryWrapper));
     }
 
+    private void flushRedis(String key){
+        stringRedisTemplate.delete(key);
+    }
 
 }

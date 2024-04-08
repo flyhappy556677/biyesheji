@@ -16,12 +16,9 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Controller;
-
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Objects;
 
 import com.example.dronemanagerhou.service.IUserService;
 import com.example.dronemanagerhou.entity.User;
@@ -82,7 +79,7 @@ import org.springframework.web.multipart.MultipartFile;
         }
         //查询所有数据
         @GetMapping
-        public Result findAll() {
+        public Result findAll()  {
             return Result.success(userService.list());
         }
 
